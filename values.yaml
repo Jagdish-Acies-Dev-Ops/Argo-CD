@@ -1,0 +1,349 @@
+# ============================================================
+# 🔹 GLOBAL CONFIG
+# ============================================================
+namespace: myapp
+
+global:
+  imagePullSecrets:
+    name: acr-secret  # 🔥 common for all deployments
+# ============================================================
+# 🔹 ARROWFLIGHT
+# ============================================================
+arrowflight:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio/arrowflight:latest
+  pvc:
+    openbaoAppRole: openbao-approle-revolutio-app-pvc-1
+    sharedCerts: shared-certs-pvc-1
+  resources:
+    requests:
+      cpu: "1"
+      memory: "4Gi"
+    limits:
+      cpu: "2"
+      memory: "8Gi"
+# ============================================================
+# KEYDB
+# ============================================================
+keydb:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/keydb:latest
+  pvc:
+    data: keydb-pvc-1
+    openbaoAppRole: openbao-approle-keydb-pvc-1
+    sharedCerts: shared-certs-pvc-1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 1Gi
+# ============================================================
+# ============================================================
+# PGBOUNCER
+# ============================================================
+pgbouncer:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/pgbouncer:latest
+  pvc:
+    openbaoAppRole: openbao-approle-pgbouncer1-new-pvc-1
+    sharedCerts: shared-certs-pvc-1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+# ============================================================
+# REDIS
+# ============================================================
+redis:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/redis:latest
+  pvc:
+    openbaoAppRole: openbao-approle-redis-pvc-1
+    sharedCerts: shared-certs-pvc-1
+  resources:
+    requests:
+      cpu: "1"
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 1Gi
+#===========================================================
+# RQ SCHEDULER
+# ============================================================
+rqscheduler:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/rqscheduler:latest
+  configMap: envs-production-web
+  pvc:
+    static: static-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: 256Mi
+    limits:
+      cpu: "500m"
+      memory: 512Mi
+# ============================================================
+# WEB
+# ============================================================
+web:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    assets: assets-pvc-1
+    platformConfigs: platform-configs-pvc-1
+    templates: user-defined-template-pvc-2
+    computation: computation-storage-pvc-1
+  resources:
+    requests:
+      cpu: "2"
+      memory: 8Gi
+    limits:
+      cpu: "8"
+      memory: 32Gi
+# ============================================================
+# WORKER
+# ============================================================
+worker:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+#=========================================
+# ============================================================
+# WORKER COMPUTATION 0
+# ============================================================
+workerComputation0:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    assets: assets-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 3Gi
+# ============================================================
+# WORKER COMPUTATION 1
+# ============================================================
+workerComputation1:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 3Gi
+#===========================================================
+# WORKER DATA UPLOAD 0
+# ============================================================
+workerDataUpload0:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+# ============================================================
+# WORKER SCHEDULER
+# ============================================================
+workerScheduler:
+  replicaCount: 1
+
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+#===========================================================
+workerSchedulerSystem:
+  replicaCount: 1
+
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+
+  databaseUrl: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)
+  redisUrl: $(REDIS_URL_SCHEDULER)
+
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-new
+
+  secrets:
+    web: secrets-production-web
+    postgres: secrets-production-postgres-new
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  pvc:
+    static: static-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+    media: media-pvc-1
+#===========================================================
+postgres:
+  name: postgres15-new
+  serviceName: postgres15-new
+  replicaCount: 1
+
+  image: revolutio.azurecr.io/revolutio_kubernetes/postgres:15-bullseye
+
+  securityContext:
+    fsGroup: 1000860000
+
+  # 🔥 FIXED
+  configMap: postgres-config          # for config files
+  envConfigMap: envs-production-postgres-new   # for env vars
+  secret: secrets-production-postgres-new
+
+  pvc:
+    data: postgresql-data-new-pvc-11
+    backup: postgresql-backup-new-pvc-11
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 4Gi
+    limits:
+      cpu: "1"
+      memory: 4Gi
+
+  tuning:
+    shared_buffers: 3GB
+    work_mem: 64MB
+    maintenance_work_mem: 1GB
+    effective_io_concurrency: 100
+    max_wal_size: 1GB
+    min_wal_size: 80MB
+    autovacuum_max_workers: 5
+    autovacuum_vacuum_cost_limit: 1000
+#===========================================================
+nginx:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/nginx:latest
+  port: 8080
+
+  pvc:
+    media: media-pvc-1
+    static: static-pvc-1
+workerAppMigration:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+
+  pvc:
+    static: static-pvc-1
+    media: media-pvc-1
+    assets: assets-pvc-1
+    templates: user-defined-template-pvc-2
+    platformConfigs: platform-configs-pvc-1
+    computation: computation-storage-pvc-1
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+saml:
+  replicaCount: 1
+  image: revolutio.azurecr.io/revolutio_kubernetes/revolutio:latest
+
+  configMaps:
+    web: envs-production-web
+    postgres: envs-production-postgres-core
+
+  pvc:
+    platformConfigs: platform-configs-pvc-1
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 1Gi
+    limits:
+      cpu: "1"
+      memory: 1Gi
